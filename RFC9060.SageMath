@@ -1,0 +1,104 @@
+def pointAddhandbook( P1, P2,PO, E,a):
+
+    X1 = P1[0]
+    Y1 = P1[1]
+    Z1 = P1[2]
+    X2 = P2[0]
+    Y2 = P2[1]
+    Z2 = P2[2]
+    
+    if P1 == PO:
+        return P2
+    elif P2 == PO:
+        return P1
+    elif P1 == -P2:
+        return PO
+    elif P1 != P2:
+        
+        u = Y2*Z1 - Y1*Z2
+        v = X2*Z1 - X1*Z2
+        w = u^2*Z1*Z2 - v^3 - 2*v^2*X1*Z2
+        
+        X3 = v*w
+        Y3 = u*(v^2*X1*Z2-w)-v^3*Y1*Z2
+        Z3 = v^3*Z1*Z2
+        return E(X3,Y3,Z3)
+    else:  #// P2 equals P1, P3 = P1 * P1
+        A = a*Z1^2 + 3*X1^2 
+        B = Y1*Z1
+        C = B* X1*Y1
+        D = A^2 - 8*C
+        
+        X3 = 2*B*D
+        Y3 = A*(4*C-D) - 8*Y1^2*B^2  
+        Z3 = 8*B^3
+
+
+        return E(X3,Y3,Z3)
+    
+def pointAdd6090( P1, P2,PO, E,a):
+
+    X1 = P1[0]
+    Y1 = P1[1]
+    Z1 = P1[2]
+    X2 = P2[0]
+    Y2 = P2[1]
+    Z2 = P2[2]
+    
+    u = Y2 * Z1 - Y1 * Z2
+    v = X2 * Z1 - X1 * Z2
+    
+    if P1 == PO:
+        return P2
+    elif P2 == PO:
+        return P1
+    elif P1 == -P2:
+        return PO
+    elif P1 != P2:
+        X3 = v * (Z2 * (Z1 * u^2 - 2 * X1 * v^2) - v^3)
+        Y3 = Z2 * (3 * X1 * u * v^2 - Y1 * v^3 - Z1 * u^3) + u * v^3
+        Z3 = v^3 * Z1 * Z2
+        return E(X3,Y3,Z3)
+    else:  #// P2 equals P1, P3 = P1 * P1
+        w = 3 * X1^2 + a * Z1^2
+        X3 = 2 * Y1 * Z1 * (w^2 - 8 * X1 * Y1^2 * Z1)
+        Y3 = 4 * Y1^2 * Z1 * (3 * w * X1 - 2 * Y1^2 * Z1) - w^3
+        Z3 = 8 * (Y1 * Z1)^3
+
+        return E(X3,Y3,Z3)
+        
+p = 0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffed
+K = GF(p)
+A = K(0x76d06)
+B = K(0x01)
+a = (3 - A^2)/(3 * B^2)
+E = EllipticCurve(K, ((3 - A^2)/(3 * B^2), (2 * A^3 - 9 * A)/(27 * B^3)))
+print(E)
+PO = E(0,1,0)
+P = E.random_element();P
+Q = E.random_element();Q
+
+
+print("handbook ")
+print("testing random elements")
+assert(P+Q == pointAddhandbook(P,Q,PO,E,a))
+print("testing with P+ PO")
+assert(P+PO == pointAddhandbook(P,PO,PO,E,a))
+print("testing with PO+ P")
+assert(PO+P == pointAddhandbook(PO,P,PO,E,a))
+print("testing with PO+ PO")
+assert(PO+PO == pointAddhandbook(PO,PO,PO,E,a))
+print("testing with P+ P")
+assert(P+P == pointAddhandbook(P,P,PO,E,a))
+
+print("RFC 6090")
+print("testing random elements")
+assert(P+Q == pointAdd6090(P,Q,PO,E,a))
+print("testing with P+ PO")
+assert(P+PO == pointAdd6090(P,PO,PO,E,a))
+print("testing with PO+ P")
+assert(PO+P == pointAdd6090(PO,P,PO,E,a))
+print("testing with PO+ PO")
+assert(PO+PO == pointAdd6090(PO,PO,PO,E,a))
+print("testing with P+ P")
+assert(P+P == pointAdd6090(P,P,PO,E,a))
