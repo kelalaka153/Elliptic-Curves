@@ -7,4 +7,4 @@ General calculation about elliptic curves
   
   used for this question; [Applicability of RFC-6090 point doubling formula in homogeneous coordinates](https://crypto.stackexchange.com/q/98531/18298)
   
-  **Result**: Both are working RFC9060 slower.
+  **Result**: Both are workin.
